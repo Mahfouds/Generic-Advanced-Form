@@ -1,0 +1,102 @@
+<da-layout-row [daGutter]="[24, 24]">
+  <da-col-item [daSpan]="24" [daXs]="24">
+    <div class="da-advance-form" dLoading [loading]="busy">
+      <div class="da-advace-form-content">
+        <span style="display: inline;">
+
+          <d-search
+          *ngIf="cols[0].allowSearch"
+            [size]="'sm'"
+            (searchFn)="getList()"
+            [(ngModel)]="searchForm.keyword"
+            class="da-inline"
+            [placeholder]="'Search with Device Number or Merchant Name'"
+          ></d-search>
+          
+          <d-button
+          *ngIf="cols[0].allowSaveChanges"
+            [showLoading]="showLoading"
+            (btnClick)="toggleLoading()"
+            style="margin-right: 10px;float: right;"
+            [disabled]="!changesMade"
+          > Save Changes</d-button>
+        </span>
+
+        <br>
+        <br>
+        <br>
+        <d-data-table #dataTable [dataSource]="listData2" [scrollable]="true" [tableWidthConfig]="tableWidthConfig">
+          <thead dTableHead>
+            <tr dTableRow>
+              <th dHeadCell *ngFor="let c of cols">{{c.label}}</th>
+              <th dHeadCell style="width: 120px;;">Actions</th>
+            </tr>
+          </thead>
+          <tbody dTableBody>
+            <ng-template let-rowItem="rowItem" let-rowIndex="rowIndex">
+              <tr dTableRow *ngIf="rowIndex === 0">
+                <td dTableCell [attr.colspan]="tableWidthConfig.length">
+                  <div *ngIf="!headerNewForm" (click)="newRow()" class="cursor-pointer">
+                    <span class="tips-icon icon-add"></span>
+                    <span style="margin-left: 10px">Create new data</span>
+                  </div>
+                  <div *ngIf="headerNewForm" class="edit-padding-fix">
+                    <da-admin-form [formConfig]="formConfig" [formData]="defaultRowData" class="editable-row"
+                      (submitted)="quickRowAdded($event)" (canceled)="quickRowCancel()"></da-admin-form>
+                  </div>
+                </td>
+              </tr>
+              <tr dTableRow>
+                <td *ngFor="let c of cols" dTableCell [editable]="cols[0].allowSearch ? c.editable : false" [editableTip]="editableTip"
+                  [(editing)]="rowItem[c.prop+'Edit']" [rowItem]="rowItem" [field]="c.prop"
+                  [beforeEditStart]="beforeEditStart" [beforeEditEnd]="beforeEditEnd">
+
+                  <d-avatar *ngIf="c.avatar" [name]="rowItem[c.prop]" [width]="24" [height]="24"></d-avatar>
+
+                  <div *ngIf="c.type =='preview'">
+                    <d-button icon="icon-preview" bsStyle="text-dark" title="preview"
+                      (click)="showRowPreviw(rowIndex+1)"></d-button>
+                  </div>
+                  
+                  <span *ngIf="!rowItem[c.prop+'Edit']&&c.type !='preview'"> {{ rowItem[c.prop] }}</span>
+                  <div *ngIf="rowItem[c.prop+'Edit']" class="edit-padding-fix">
+                    <div *ngIf="c.type == 'input'">
+                      <input class="devui-form-control" [name]="c.prop" [(ngModel)]="rowItem[c.prop]"
+                        [attr.maxlength]="100" [attr.minlength]="3"  (ngModelChange)="onCellEdit()"/>
+                    </div>
+                    <div *ngIf="c.type =='select'">
+                      <d-select name="status" [(ngModel)]="rowItem[c.prop]" [options]="c.options"  (ngModelChange)="onCellEdit()"></d-select>
+                    </div>
+                    <div *ngIf="c.type =='datePicker'">
+                      <form *ngIf="rowItem[c.prop+'Edit']" class="form-inline edit-padding-fix">
+                        <div class="devui-form-group">
+                          <div class="devui-input-group devui-dropdown-origin">
+                            <input class="devui-form-control search" name="date" [(ngModel)]="rowItem[c.prop]"
+                              dDatepicker appendToBody #datePicker="datepicker" [autoOpen]="true"
+                              (ngModelChange)="onCellEdit();onEditEnd(rowItem, c.prop+'Edit')" />
+                            <div class="devui-input-group-addon" (click)="datePicker.toggle()">
+                              <i class="icon icon-calendar"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <d-button icon="icon-delete" bsStyle="text-dark" title="delete"
+                    (click)="deleteRow(rowIndex)"></d-button>
+                </td>
+              </tr>
+            </ng-template>
+          </tbody>
+        </d-data-table>
+      </div>
+      <d-pagination [size]="'sm'" [total]="pager.total" [(pageSize)]="pager.pageSize" [(pageIndex)]="pager.pageIndex"
+        [canViewTotal]="true" [canChangePageSize]="true" [canJumpPage]="true" [maxItems]="5"
+        (pageIndexChange)="onPageChange($event)" (pageSizeChange)="onSizeChange($event)">
+      </d-pagination>
+    </div>
+  </da-col-item>
+</da-layout-row>
