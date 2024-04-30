@@ -4,7 +4,7 @@
 
 ## Description
 
-this compoenent is a angualr dev ui component that's name 'Advanced Form' but it'll be a generic one and you can call them in your modules or component angular with just some additional arguments 
+this compoenent is a angular dev ui component that's name 'Advanced Form' but it'll be a generic one and you can call them in your modules or component angular with just some additional arguments 
 
 ## Arguments
 
@@ -15,7 +15,12 @@ this compoenent is a angualr dev ui component that's name 'Advanced Form' but it
 
 ## Installation
 
-[Provide instructions on how to install and set up your project. Include any dependencies that need to be installed.]
+- clone it in your shared angular folder or in your desktop then copy paste to the shared to ignore opening 2 gits in your project.
+- on your global module/module.ts you should import the generic advanced form module (in case of your app module is for the authentification then import it into the sub global module of app module , exemple: pages module)
+- call the genric form by : " <da-advance-form-generic [cols]="config" [listData]="data" [modalData]="modalData ? modalData:null" (dataEvent)="receiveDataFromChild($event)">
+    </da-advance-form-generic>"
+- prepare the arguments on your component.ts by calling the config and data from the responsable service : for exemple if your component for merchants then you'll prepare the config of merchant and the data (get it from backend api or whatever)
+- you can start working with it
 
 ## Usage
 
